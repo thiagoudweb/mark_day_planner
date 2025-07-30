@@ -3,7 +3,7 @@
 ## 👨‍💻 Estudantes
 
 Thayson Guedes,  Thiago Ferreira, Jeasiel Abner
-[Thayson Guedes](https://github.com/ThaysonScript), [Thiago Silva](https://github.com/thiagoudweb), [Thiago Silva](https://github.com/Jeasiel)
+[Thayson Guedes](https://github.com/ThaysonScript), [Thiago Silva](https://github.com/thiagoudweb), [Jeasiel Abner](https://github.com/Jeasiel)
 
 ## 🚀 Descrição do Projeto: Sistema Solar
 
@@ -37,7 +37,6 @@ Este projeto consiste em criar um planner virtual, afim de otimizar as tarefas d
    
     ```bash
     flutter pub get
-    
 
 5. inicie o projeto:
 
