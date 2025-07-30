@@ -2,7 +2,6 @@
 
 ## 👨‍💻 Estudantes
 
-Thayson Guedes,  Thiago Ferreira, Jeasiel Abner
 [Thayson Guedes](https://github.com/ThaysonScript), [Thiago Silva](https://github.com/thiagoudweb), [Jeasiel Abner](https://github.com/Jeasiel)
 
 ## 🚀 Descrição do Projeto: Sistema Solar
