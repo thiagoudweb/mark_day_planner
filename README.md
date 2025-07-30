@@ -9,7 +9,7 @@ Thayson Guedes,  Thiago Ferreira, Jeasiel Abner
 
 Este projeto consiste em criar um planner virtual, afim de otimizar as tarefas do dia a dia do usuário.
 
-### ⚙️ Funcionalidades
+### 🛠️ Funcionalidades
 
 - **Criar metas para a semana, mês, e ano:** 
 - **Criar um planejamento de atividades para um dia específico:** 
