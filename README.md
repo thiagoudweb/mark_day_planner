@@ -1,16 +1,53 @@
-# mark_day_planner
+# Projeto para disciplina de PLP - Paradigmas de linguagem de programação - 2025.1
 
-A new Flutter project.
+## 👨‍💻 Estudantes
 
-## Getting Started
+Thayson Guedes,  Thiago Ferreira, Jeasiel Abner
+[Thayson Guedes](https://github.com/ThaysonScript), [Thiago Silva](https://github.com/thiagoudweb), [Thiago Silva](https://github.com/Jeasiel)
 
-This project is a starting point for a Flutter application.
+## 🚀 Descrição do Projeto: Sistema Solar
 
-A few resources to get you started if this is your first Flutter project:
+Este projeto consiste em criar um planner virtual, afim de otimizar as tarefas do dia a dia do usuário.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### ⚙️ Funcionalidades
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **Criar metas para a semana, mês, e ano:** 
+- **Criar um planejamento de atividades para um dia específico:** 
+- **Marcar as tarefas como executadas, parcialmente ou adiadas;** 
+- **Destacar tarefas e metas por categoria:** 
+- **Criar lembretes semanais para realizar tarefas:** 
+
+### ⚙️ Tecnologias Utilizadas
+
+- **Dart** Linguagem principal
+- **Flutter** Framework
+- **VisualCode** Ambiente de desenvolvimento
+
+## Instalação
+
+1. Certifique-se de ter o [Flutter](https://flutter.dev/) e o [Dart](https://dart.dev/) instalados em sua máquina.
+
+2. Clone o repositório do projeto:
+
+   ```bash
+   git clone https://github.com/thiagoudweb/mark_day_planner.git
+   cd mark_day_planner
+   
+3. Instale as dependências:
+   
+    ```bash
+    flutter pub get
+    
+
+5. inicie o projeto:
+
+    ```bash
+    flutter run
+    
+6. Escolha a opção web(Seu navegador):
+
+
+
+## Status do Projeto
+
+Em desenvolvimento 🚧
