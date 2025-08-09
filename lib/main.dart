@@ -1,34 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'state/meta_store.dart';
+import 'widgets/metas_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const PlannerApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class PlannerApp extends StatelessWidget {
+  const PlannerApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mark Day Planner',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
+    return ChangeNotifierProvider(
+      create: (_) => MetaStore(),
+      child: MaterialApp(
+        title: 'Planner Virtual',
+        theme: ThemeData(
+          useMaterial3: true,
+          colorSchemeSeed: const Color(0xFF4F46E5),
+        ),
+        debugShowCheckedModeBanner: false,
+        home: const MetasPage(),
       ),
-      home: const HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Mark Day Planner')),
-      body: const Center(child: Text('Hello, world!')),
     );
   }
 }
