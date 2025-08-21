@@ -14,25 +14,39 @@ class MetaStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateAt(int index, Meta updated) {
-    if (index < 0 || index >= _metas.length) return;
+  void update(String id, Meta updated) {
+    final index = _metas.indexWhere((meta) => meta.id == id);
+    if (index == -1) return;
     _metas[index] = updated;
     notifyListeners();
   }
 
-  void removeAt(int index) {
-    if (index < 0 || index >= _metas.length) return;
-    _metas.removeAt(index);
+  void remove(String id) {
+    _metas.removeWhere((meta) => meta.id == id);
     notifyListeners();
   }
 
-  /// Limpa todas as metas (útil para testes).
+  Meta findById(String id) {
+    return _metas.firstWhere((meta) => meta.id == id);
+  }
+
+  List<Meta> getMetasPorStatus(StatusMeta status) {
+    return _metas.where((meta) => meta.status == status).toList();
+  }
+
+  List<Meta> getMetasPorCategoria(Categoria categoria) {
+    return _metas.where((meta) => meta.categoria == categoria).toList();
+  }
+
+  List<Meta> getMetasVencidas() {
+    return _metas.where((meta) => meta.estaVencida).toList();
+  }
+
   void clear() {
     _metas.clear();
     notifyListeners();
   }
 
-  /// Agrupa metas por período, sempre retornando as três chaves.
   Map<PeriodoMeta, List<Meta>> get metasPorPeriodo {
     final mapa = {
       PeriodoMeta.semanal: <Meta>[],
@@ -45,7 +59,6 @@ class MetaStore extends ChangeNotifier {
     return Map.unmodifiable(mapa);
   }
 
-  /// Dados de exemplo para facilitar o teste visual.
   void seedMockData() {
     if (_metas.isNotEmpty) return;
     _metas.addAll([
@@ -54,26 +67,84 @@ class MetaStore extends ChangeNotifier {
         descricao: 'Artigos de Flutter esta semana',
         periodo: PeriodoMeta.semanal,
         categoria: Categoria.estudo,
+        dataLimite: DateTime.now().add(const Duration(days: 7)),
       ),
       Meta(
         titulo: 'Correr 50 km',
         descricao: 'Meta de corrida do mês',
         periodo: PeriodoMeta.mensal,
         categoria: Categoria.saude,
+        dataLimite: DateTime.now().add(const Duration(days: 30)),
       ),
       Meta(
         titulo: 'Guardar 10% da renda',
         descricao: 'Planejamento financeiro anual',
         periodo: PeriodoMeta.anual,
         categoria: Categoria.financas,
+        dataLimite: DateTime.now().add(const Duration(days: 365)),
       ),
       Meta(
         titulo: 'Revisar projeto',
         descricao: 'Organizar backlog mensal',
         periodo: PeriodoMeta.mensal,
         categoria: Categoria.trabalho,
+        dataLimite: DateTime.now().add(const Duration(days: 30)),
       ),
     ]);
     notifyListeners();
+  }
+  PeriodoMeta? _filtroPeriodo;
+  Categoria? _filtroCategoria;
+  StatusMeta? _filtroStatus;
+
+  PeriodoMeta? get filtroPeriodo => _filtroPeriodo;
+  Categoria? get filtroCategoria => _filtroCategoria;
+  StatusMeta? get filtroStatus => _filtroStatus;
+
+  void setFiltroPeriodo(PeriodoMeta? periodo) {
+    _filtroPeriodo = periodo;
+    notifyListeners();
+  }
+
+  void setFiltroCategoria(Categoria? categoria) {
+    _filtroCategoria = categoria;
+    notifyListeners();
+  }
+
+  void setFiltroStatus(StatusMeta? status) {
+    _filtroStatus = status;
+    notifyListeners();
+  }
+
+  void limparFiltros() {
+    _filtroPeriodo = null;
+    _filtroCategoria = null;
+    _filtroStatus = null;
+    notifyListeners();
+  }
+
+  List<Meta> get metasFiltradas {
+    return _metas.where((meta) {
+      final periodoMatch = _filtroPeriodo == null || meta.periodo == _filtroPeriodo;
+      final categoriaMatch = _filtroCategoria == null || meta.categoria == _filtroCategoria;
+      final statusMatch = _filtroStatus == null || meta.status == _filtroStatus;
+
+      return periodoMatch && categoriaMatch && statusMatch;
+    }).toList();
+  }
+
+  Map<PeriodoMeta, List<Meta>> get metasFiltradasPorPeriodo {
+    final metasFiltradas = this.metasFiltradas;
+    final mapa = {
+      PeriodoMeta.semanal: <Meta>[],
+      PeriodoMeta.mensal: <Meta>[],
+      PeriodoMeta.anual: <Meta>[],
+    };
+
+    for (final m in metasFiltradas) {
+      mapa[m.periodo]!.add(m);
+    }
+
+    return Map.unmodifiable(mapa);
   }
 }
