@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../state/meta_store.dart';
-import '../models/enums.dart';
 import '../models/meta.dart';
+import '../models/enums.dart';
 import 'meta_card.dart';
+import 'editar_meta_page.dart';
+import 'filtros_bar.dart';
 
 class MetasPage extends StatelessWidget {
   const MetasPage({super.key});
@@ -11,22 +13,73 @@ class MetasPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<MetaStore>();
-    final grouped = store.metasPorPeriodo;
+    final grouped = store.metasFiltradasPorPeriodo;
 
     const ordem = [PeriodoMeta.semanal, PeriodoMeta.mensal, PeriodoMeta.anual];
 
-    final children = <Widget>[];
+    final children = <Widget>[
+      const FiltrosBar(),
+      const SizedBox(height: 16),
+    ];
+
+    if (store.filtroPeriodo != null ||
+        store.filtroCategoria != null ||
+        store.filtroStatus != null) {
+      children.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children: [
+              const Icon(Icons.filter_alt, size: 16, color: Colors.blue),
+              const Text(
+                'Filtros ativos:',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (store.filtroPeriodo != null)
+                _FiltroAtivoChip(
+                  label: 'Período: ${store.filtroPeriodo!.label}',
+                  onClear: () => store.setFiltroPeriodo(null),
+                ),
+              if (store.filtroCategoria != null)
+                _FiltroAtivoChip(
+                  label: 'Categoria: ${store.filtroCategoria!.label}',
+                  onClear: () => store.setFiltroCategoria(null),
+                ),
+              if (store.filtroStatus != null)
+                _FiltroAtivoChip(
+                  label: 'Status: ${store.filtroStatus!.label}',
+                  onClear: () => store.setFiltroStatus(null),
+                ),
+            ],
+          ),
+        ),
+      );
+    }
+
     for (final periodo in ordem) {
       final lista = grouped[periodo] ?? const <Meta>[];
-      children.add(_SectionHeader(title: periodo.label));
+
+      if (lista.isNotEmpty || (store.filtroPeriodo == null && store.filtroCategoria == null && store.filtroStatus == null)) {
+        children.add(_SectionHeader(title: periodo.label));
+      }
+
       if (lista.isEmpty) {
         children.add(const _EmptySectionHint());
       } else {
         for (final meta in lista) {
-          children.add(MetaCard(meta: meta));
+          children.add(
+            MetaCard(
+              meta: meta,
+              onTap: () => _abrirTelaEdicao(context, meta),
+            ),
+          );
         }
       }
-      // Espaço entre seções
       children.add(const SizedBox(height: 8));
     }
 
@@ -52,90 +105,27 @@ class MetasPage extends StatelessWidget {
         itemBuilder: (context, index) => children[index],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _abrirDialogAdicionar(context),
+        onPressed: () => _abrirTelaNovaMeta(context),
         icon: const Icon(Icons.add),
         label: const Text('Adicionar Meta'),
       ),
     );
   }
 
-  Future<void> _abrirDialogAdicionar(BuildContext context) async {
-    final store = context.read<MetaStore>();
-    final tituloCtrl = TextEditingController();
-    final descCtrl = TextEditingController();
-    PeriodoMeta periodo = PeriodoMeta.semanal;
-    Categoria categoria = Categoria.pessoal;
+  void _abrirTelaEdicao(BuildContext context, Meta meta) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditarMetaPage(meta: meta),
+      ),
+    );
+  }
 
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Nova Meta (rápida)'),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextField(
-                controller: tituloCtrl,
-                decoration: const InputDecoration(labelText: 'Título'),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: descCtrl,
-                decoration: const InputDecoration(labelText: 'Descrição'),
-                minLines: 2,
-                maxLines: 4,
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: DropdownButtonFormField<PeriodoMeta>(
-                      value: periodo,
-                      decoration: const InputDecoration(labelText: 'Período'),
-                      items: [
-                        for (final p in PeriodoMeta.values)
-                          DropdownMenuItem(value: p, child: Text(p.label)),
-                      ],
-                      onChanged: (v) => periodo = v ?? PeriodoMeta.semanal,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: DropdownButtonFormField<Categoria>(
-                      value: categoria,
-                      decoration: const InputDecoration(labelText: 'Categoria'),
-                      items: [
-                        for (final c in Categoria.values)
-                          DropdownMenuItem(value: c, child: Text(c.label)),
-                      ],
-                      onChanged: (v) => categoria = v ?? Categoria.pessoal,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            child: const Text('Cancelar'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          FilledButton(
-            child: const Text('Adicionar'),
-            onPressed: () {
-              if (tituloCtrl.text.trim().isEmpty) return;
-              store.add(
-                Meta(
-                  titulo: tituloCtrl.text.trim(),
-                  descricao: descCtrl.text.trim(),
-                  periodo: periodo,
-                  categoria: categoria,
-                ),
-              );
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
+  void _abrirTelaNovaMeta(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditarMetaPage(),
       ),
     );
   }
@@ -189,6 +179,24 @@ class _EmptySectionHint extends StatelessWidget {
           style: TextStyle(color: Colors.black54),
         ),
       ),
+    );
+  }
+}
+
+class _FiltroAtivoChip extends StatelessWidget {
+  final String label;
+  final VoidCallback onClear;
+
+  const _FiltroAtivoChip({required this.label, required this.onClear});
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      label: Text(label, style: const TextStyle(fontSize: 12)),
+      deleteIcon: const Icon(Icons.close, size: 16),
+      onDeleted: onClear,
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      visualDensity: VisualDensity.compact,
     );
   }
 }

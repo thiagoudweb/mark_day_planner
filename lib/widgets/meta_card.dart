@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/meta.dart';
 import '../models/enums.dart';
+import 'package:intl/intl.dart';
 
 class MetaCard extends StatelessWidget {
   final Meta meta;
@@ -73,6 +74,27 @@ class MetaCard extends StatelessWidget {
                         ),
                       ],
                     ),
+                    if (meta.dataLimite != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Data limite: ${DateFormat('dd/MM/yyyy').format(meta.dataLimite!)}',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
+
+                    if (meta.diasRestantes != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          'Dias restantes: ${meta.diasRestantes}',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: meta.diasRestantes! < 7 ? Colors.red : Colors.grey[600],
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
