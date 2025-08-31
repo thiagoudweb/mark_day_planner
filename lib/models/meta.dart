@@ -22,38 +22,36 @@ class Meta {
     DateTime? dataCriacao,
     this.dataConclusao,
     this.dataLimite,
-  }) :
-        id = id ?? const Uuid().v4(),
-        dataCriacao = dataCriacao ?? DateTime.now() {
-
+  }) : id = id ?? const Uuid().v4(),
+       dataCriacao = dataCriacao ?? DateTime.now() {
     if (titulo.isEmpty) {
       throw ArgumentError('Título não pode ser vazio');
     }
-
-    if (dataLimite != null && dataLimite!.isBefore(dataCriacao ?? DateTime.now())) {
-      throw ArgumentError('Data limite não pode ser anterior à data de criação');
+    // dataCriacao já está inicializado, nunca será null
+    if (dataLimite != null && dataLimite!.isBefore(this.dataCriacao)) {
+      throw ArgumentError(
+        'Data limite não pode ser anterior à data de criação',
+      );
     }
   }
 
   Meta copyWith({
-    String? id,
     String? titulo,
     String? descricao,
     PeriodoMeta? periodo,
     Categoria? categoria,
     StatusMeta? status,
-    DateTime? dataCriacao,
     DateTime? dataConclusao,
     DateTime? dataLimite,
   }) {
     return Meta(
-      id: id ?? this.id,
+      id: id, // mantém o id original
       titulo: titulo ?? this.titulo,
       descricao: descricao ?? this.descricao,
       periodo: periodo ?? this.periodo,
       categoria: categoria ?? this.categoria,
       status: status ?? this.status,
-      dataCriacao: dataCriacao ?? this.dataCriacao,
+      dataCriacao: dataCriacao, // mantém a data de criação original
       dataConclusao: dataConclusao ?? this.dataConclusao,
       dataLimite: dataLimite ?? this.dataLimite,
     );
@@ -66,8 +64,8 @@ class Meta {
 
   int? get diasRestantes {
     if (dataLimite == null) return null;
-    final diferenca = dataLimite!.difference(DateTime.now());
-    return diferenca.inDays;
+    final diferenca = dataLimite!.difference(DateTime.now()).inDays;
+    return diferenca < 0 ? 0 : diferenca;
   }
 
   double get progresso {
