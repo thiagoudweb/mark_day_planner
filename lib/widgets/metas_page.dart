@@ -17,10 +17,7 @@ class MetasPage extends StatelessWidget {
 
     const ordem = [PeriodoMeta.semanal, PeriodoMeta.mensal, PeriodoMeta.anual];
 
-    final children = <Widget>[
-      const FiltrosBar(),
-      const SizedBox(height: 16),
-    ];
+    final children = <Widget>[const FiltrosBar(), const SizedBox(height: 16)];
 
     if (store.filtroPeriodo != null ||
         store.filtroCategoria != null ||
@@ -64,7 +61,10 @@ class MetasPage extends StatelessWidget {
     for (final periodo in ordem) {
       final lista = grouped[periodo] ?? const <Meta>[];
 
-      if (lista.isNotEmpty || (store.filtroPeriodo == null && store.filtroCategoria == null && store.filtroStatus == null)) {
+      if (lista.isNotEmpty ||
+          (store.filtroPeriodo == null &&
+              store.filtroCategoria == null &&
+              store.filtroStatus == null)) {
         children.add(_SectionHeader(title: periodo.label));
       }
 
@@ -73,60 +73,68 @@ class MetasPage extends StatelessWidget {
       } else {
         for (final meta in lista) {
           children.add(
-            MetaCard(
-              meta: meta,
-              onTap: () => _abrirTelaEdicao(context, meta),
-            ),
+            MetaCard(meta: meta, onTap: () => _abrirTelaEdicao(context, meta)),
           );
         }
       }
       children.add(const SizedBox(height: 8));
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Metas por Período'),
-        actions: [
-          IconButton(
-            tooltip: 'Adicionar exemplos',
-            onPressed: store.seedMockData,
-            icon: const Icon(Icons.auto_awesome),
+    return Stack(
+      children: [
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    tooltip: 'Adicionar exemplos',
+                    onPressed: store.seedMockData,
+                    icon: const Icon(Icons.auto_awesome),
+                  ),
+                  IconButton(
+                    tooltip: 'Limpar',
+                    onPressed: store.clear,
+                    icon: const Icon(Icons.delete_sweep_outlined),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 80),
+                itemCount: children.length,
+                itemBuilder: (context, index) => children[index],
+              ),
+            ),
+          ],
+        ),
+        Positioned(
+          right: 16,
+          bottom: 16,
+          child: FloatingActionButton.extended(
+            onPressed: () => _abrirTelaNovaMeta(context),
+            icon: const Icon(Icons.add),
+            label: const Text('Adicionar Meta'),
           ),
-          IconButton(
-            tooltip: 'Limpar',
-            onPressed: store.clear,
-            icon: const Icon(Icons.delete_sweep_outlined),
-          ),
-        ],
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
-        itemCount: children.length,
-        itemBuilder: (context, index) => children[index],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _abrirTelaNovaMeta(context),
-        icon: const Icon(Icons.add),
-        label: const Text('Adicionar Meta'),
-      ),
+        ),
+      ],
     );
   }
 
   void _abrirTelaEdicao(BuildContext context, Meta meta) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => EditarMetaPage(meta: meta),
-      ),
+      MaterialPageRoute(builder: (context) => EditarMetaPage(meta: meta)),
     );
   }
 
   void _abrirTelaNovaMeta(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => EditarMetaPage(),
-      ),
+      MaterialPageRoute(builder: (context) => EditarMetaPage()),
     );
   }
 }

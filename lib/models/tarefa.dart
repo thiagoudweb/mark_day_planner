@@ -1,27 +1,23 @@
 import 'package:uuid/uuid.dart';
 import 'enums.dart';
 
-class Meta {
+class Tarefa {
   final String id;
   final String titulo;
   final String descricao;
-  final PeriodoMeta periodo;
   final Categoria categoria;
-  final StatusMeta status;
-  final TurnoDia turno;
-  final TipoDuracao tipoDuracao;
+  final bool concluida;
   final DateTime dataCriacao;
   final DateTime? dataConclusao;
   final DateTime? dataLimite;
+  final TurnoDia turno;
 
-  Meta({
+  Tarefa({
     required this.titulo,
     required this.descricao,
-    required this.periodo,
     required this.categoria,
-    this.status = StatusMeta.naoAtingida,
     required this.turno,
-    required this.tipoDuracao,
+    this.concluida = false,
     String? id,
     DateTime? dataCriacao,
     this.dataConclusao,
@@ -31,6 +27,7 @@ class Meta {
     if (titulo.isEmpty) {
       throw ArgumentError('Título não pode ser vazio');
     }
+
     if (dataLimite != null && dataLimite!.isBefore(this.dataCriacao)) {
       throw ArgumentError(
         'Data limite não pode ser anterior à data de criação',
@@ -38,34 +35,30 @@ class Meta {
     }
   }
 
-  Meta copyWith({
+  Tarefa copyWith({
     String? titulo,
     String? descricao,
-    PeriodoMeta? periodo,
     Categoria? categoria,
-    StatusMeta? status,
-    TurnoDia? turno,
-    TipoDuracao? tipoDuracao,
+    bool? concluida,
     DateTime? dataConclusao,
     DateTime? dataLimite,
+    TurnoDia? turno,
   }) {
-    return Meta(
+    return Tarefa(
       id: id,
       titulo: titulo ?? this.titulo,
       descricao: descricao ?? this.descricao,
-      periodo: periodo ?? this.periodo,
       categoria: categoria ?? this.categoria,
-      status: status ?? this.status,
-      turno: turno ?? this.turno,
-      tipoDuracao: tipoDuracao ?? this.tipoDuracao,
+      concluida: concluida ?? this.concluida,
       dataCriacao: dataCriacao,
       dataConclusao: dataConclusao ?? this.dataConclusao,
       dataLimite: dataLimite ?? this.dataLimite,
+      turno: turno ?? this.turno,
     );
   }
 
   bool get estaVencida {
-    if (dataLimite == null) return false;
+    if (dataLimite == null || concluida) return false;
     return DateTime.now().isAfter(dataLimite!);
   }
 
@@ -75,47 +68,30 @@ class Meta {
     return diferenca < 0 ? 0 : diferenca;
   }
 
-  double get progresso {
-    switch (status) {
-      case StatusMeta.naoAtingida:
-        return 0.0;
-      case StatusMeta.parcial:
-        return 0.5;
-      case StatusMeta.atingida:
-        return 1.0;
-    }
-  }
-
   @override
   String toString() {
-    return 'Meta(id: $id, titulo: $titulo, periodo: ${periodo.label}, '
-        'categoria: ${categoria.label}, status: ${status.label}, turno: ${turno.label}, tipoDuracao: ${tipoDuracao.label}, '
+    return 'Tarefa(id: $id, titulo: $titulo, categoria: ${categoria.label}, '
+        'turno: ${turno.label}, concluida: $concluida, '
         'dataCriacao: $dataCriacao, dataLimite: $dataLimite)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is Meta && other.id == id;
+    return other is Tarefa && other.id == id;
   }
 
   @override
   int get hashCode => id.hashCode;
 
-  factory Meta.fromMap(Map<String, dynamic> map) {
-    return Meta(
+  factory Tarefa.fromMap(Map<String, dynamic> map) {
+    return Tarefa(
       id: map['id'] as String,
       titulo: map['titulo'] as String,
       descricao: map['descricao'] as String,
-      periodo: PeriodoMeta.values[map['periodo'] as int],
       categoria: Categoria.values[map['categoria'] as int],
-      status: StatusMeta.values[map['status'] as int],
-      turno: map['turno'] != null
-          ? TurnoDia.values[map['turno'] as int]
-          : TurnoDia.manha,
-      tipoDuracao: map['tipoDuracao'] != null
-          ? TipoDuracao.values[map['tipoDuracao'] as int]
-          : TipoDuracao.turno,
+      concluida: map['concluida'] as bool,
+      turno: TurnoDia.values[map['turno'] as int],
       dataCriacao: DateTime.parse(map['dataCriacao'] as String),
       dataConclusao: map['dataConclusao'] != null
           ? DateTime.parse(map['dataConclusao'] as String)
@@ -131,11 +107,9 @@ class Meta {
       'id': id,
       'titulo': titulo,
       'descricao': descricao,
-      'periodo': periodo.index,
       'categoria': categoria.index,
-      'status': status.index,
+      'concluida': concluida,
       'turno': turno.index,
-      'tipoDuracao': tipoDuracao.index,
       'dataCriacao': dataCriacao.toIso8601String(),
       'dataConclusao': dataConclusao?.toIso8601String(),
       'dataLimite': dataLimite?.toIso8601String(),

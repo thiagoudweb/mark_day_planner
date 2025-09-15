@@ -67,6 +67,8 @@ class MetaStore extends ChangeNotifier {
         descricao: 'Artigos de Flutter esta semana',
         periodo: PeriodoMeta.semanal,
         categoria: Categoria.estudo,
+        turno: TurnoDia.manha,
+        tipoDuracao: TipoDuracao.meiaHora,
         dataLimite: DateTime.now().add(const Duration(days: 7)),
       ),
       Meta(
@@ -74,6 +76,8 @@ class MetaStore extends ChangeNotifier {
         descricao: 'Meta de corrida do mês',
         periodo: PeriodoMeta.mensal,
         categoria: Categoria.saude,
+        turno: TurnoDia.tarde,
+        tipoDuracao: TipoDuracao.umaHora,
         dataLimite: DateTime.now().add(const Duration(days: 30)),
       ),
       Meta(
@@ -81,6 +85,8 @@ class MetaStore extends ChangeNotifier {
         descricao: 'Planejamento financeiro anual',
         periodo: PeriodoMeta.anual,
         categoria: Categoria.financas,
+        turno: TurnoDia.noite,
+        tipoDuracao: TipoDuracao.turno,
         dataLimite: DateTime.now().add(const Duration(days: 365)),
       ),
       Meta(
@@ -88,11 +94,14 @@ class MetaStore extends ChangeNotifier {
         descricao: 'Organizar backlog mensal',
         periodo: PeriodoMeta.mensal,
         categoria: Categoria.trabalho,
+        turno: TurnoDia.tarde,
+        tipoDuracao: TipoDuracao.umaHora,
         dataLimite: DateTime.now().add(const Duration(days: 30)),
       ),
     ]);
     notifyListeners();
   }
+
   PeriodoMeta? _filtroPeriodo;
   Categoria? _filtroCategoria;
   StatusMeta? _filtroStatus;
@@ -125,8 +134,10 @@ class MetaStore extends ChangeNotifier {
 
   List<Meta> get metasFiltradas {
     return _metas.where((meta) {
-      final periodoMatch = _filtroPeriodo == null || meta.periodo == _filtroPeriodo;
-      final categoriaMatch = _filtroCategoria == null || meta.categoria == _filtroCategoria;
+      final periodoMatch =
+          _filtroPeriodo == null || meta.periodo == _filtroPeriodo;
+      final categoriaMatch =
+          _filtroCategoria == null || meta.categoria == _filtroCategoria;
       final statusMatch = _filtroStatus == null || meta.status == _filtroStatus;
 
       return periodoMatch && categoriaMatch && statusMatch;

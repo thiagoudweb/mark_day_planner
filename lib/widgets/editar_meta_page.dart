@@ -20,6 +20,8 @@ class EditarMetaPageState extends State<EditarMetaPage> {
   late PeriodoMeta _periodo;
   late Categoria _categoria;
   late StatusMeta _status;
+  late TurnoDia _turno;
+  late TipoDuracao _tipoDuracao;
   late DateTime? _dataLimite;
 
   @override
@@ -32,6 +34,8 @@ class EditarMetaPageState extends State<EditarMetaPage> {
     _periodo = meta?.periodo ?? PeriodoMeta.semanal;
     _categoria = meta?.categoria ?? Categoria.pessoal;
     _status = meta?.status ?? StatusMeta.naoAtingida;
+    _turno = meta?.turno ?? TurnoDia.manha;
+    _tipoDuracao = meta?.tipoDuracao ?? TipoDuracao.turno;
     _dataLimite = meta?.dataLimite;
   }
 
@@ -97,10 +101,12 @@ class EditarMetaPageState extends State<EditarMetaPage> {
                         border: OutlineInputBorder(),
                       ),
                       items: PeriodoMeta.values
-                          .map((p) => DropdownMenuItem(
-                        value: p,
-                        child: Text(p.label),
-                      ))
+                          .map(
+                            (p) => DropdownMenuItem(
+                              value: p,
+                              child: Text(p.label),
+                            ),
+                          )
                           .toList(),
                       onChanged: (value) {
                         if (value != null) {
@@ -118,10 +124,12 @@ class EditarMetaPageState extends State<EditarMetaPage> {
                         border: OutlineInputBorder(),
                       ),
                       items: Categoria.values
-                          .map((c) => DropdownMenuItem(
-                        value: c,
-                        child: Text(c.label),
-                      ))
+                          .map(
+                            (c) => DropdownMenuItem(
+                              value: c,
+                              child: Text(c.label),
+                            ),
+                          )
                           .toList(),
                       onChanged: (value) {
                         if (value != null) {
@@ -133,6 +141,38 @@ class EditarMetaPageState extends State<EditarMetaPage> {
                 ],
               ),
               const SizedBox(height: 16),
+              DropdownButtonFormField<TurnoDia>(
+                value: _turno,
+                decoration: const InputDecoration(
+                  labelText: 'Turno *',
+                  border: OutlineInputBorder(),
+                ),
+                items: TurnoDia.values
+                    .map(
+                      (t) => DropdownMenuItem(value: t, child: Text(t.label)),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value != null) setState(() => _turno = value);
+                },
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<TipoDuracao>(
+                value: _tipoDuracao,
+                decoration: const InputDecoration(
+                  labelText: 'Duração *',
+                  border: OutlineInputBorder(),
+                ),
+                items: TipoDuracao.values
+                    .map(
+                      (d) => DropdownMenuItem(value: d, child: Text(d.label)),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value != null) setState(() => _tipoDuracao = value);
+                },
+              ),
+              const SizedBox(height: 16),
               DropdownButtonFormField<StatusMeta>(
                 value: _status,
                 decoration: const InputDecoration(
@@ -140,10 +180,9 @@ class EditarMetaPageState extends State<EditarMetaPage> {
                   border: OutlineInputBorder(),
                 ),
                 items: StatusMeta.values
-                    .map((s) => DropdownMenuItem(
-                  value: s,
-                  child: Text(s.label),
-                ))
+                    .map(
+                      (s) => DropdownMenuItem(value: s, child: Text(s.label)),
+                    )
                     .toList(),
                 onChanged: (value) {
                   if (value != null) {
@@ -157,7 +196,9 @@ class EditarMetaPageState extends State<EditarMetaPage> {
                 value: _dataLimite != null,
                 onChanged: (value) {
                   setState(() {
-                    _dataLimite = value ? DateTime.now().add(const Duration(days: 7)) : null;
+                    _dataLimite = value
+                        ? DateTime.now().add(const Duration(days: 7))
+                        : null;
                   });
                 },
               ),
@@ -212,6 +253,8 @@ class EditarMetaPageState extends State<EditarMetaPage> {
         periodo: _periodo,
         categoria: _categoria,
         status: _status,
+        turno: _turno,
+        tipoDuracao: _tipoDuracao,
         dataLimite: _dataLimite,
       );
 
