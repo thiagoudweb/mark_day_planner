@@ -6,6 +6,7 @@ import '../models/enums.dart';
 import 'meta_card.dart';
 import 'editar_meta_page.dart';
 import 'filtros_bar.dart';
+import 'estatisticas_page.dart';
 
 class MetasPage extends StatelessWidget {
   const MetasPage({super.key});
@@ -21,7 +22,9 @@ class MetasPage extends StatelessWidget {
 
     if (store.filtroPeriodo != null ||
         store.filtroCategoria != null ||
-        store.filtroStatus != null) {
+        store.filtroStatus != null ||
+        store.filtroTurno != null ||
+        store.filtroTipoDuracao != null) {
       children.add(
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
@@ -52,6 +55,16 @@ class MetasPage extends StatelessWidget {
                   label: 'Status: ${store.filtroStatus!.label}',
                   onClear: () => store.setFiltroStatus(null),
                 ),
+              if (store.filtroTurno != null)
+                _FiltroAtivoChip(
+                  label: 'Turno: ${store.filtroTurno!.label}',
+                  onClear: () => store.setFiltroTurno(null),
+                ),
+              if (store.filtroTipoDuracao != null)
+                _FiltroAtivoChip(
+                  label: 'Duração: ${store.filtroTipoDuracao!.label}',
+                  onClear: () => store.setFiltroTipoDuracao(null),
+                ),
             ],
           ),
         ),
@@ -64,7 +77,9 @@ class MetasPage extends StatelessWidget {
       if (lista.isNotEmpty ||
           (store.filtroPeriodo == null &&
               store.filtroCategoria == null &&
-              store.filtroStatus == null)) {
+              store.filtroStatus == null &&
+              store.filtroTurno == null &&
+              store.filtroTipoDuracao == null)) {
         children.add(_SectionHeader(title: periodo.label));
       }
 
@@ -73,54 +88,50 @@ class MetasPage extends StatelessWidget {
       } else {
         for (final meta in lista) {
           children.add(
-            MetaCard(meta: meta, onTap: () => _abrirTelaEdicao(context, meta)),
+            MetaCard(
+              meta: meta,
+              onTap: () => _abrirTelaEdicao(context, meta),
+            ),
           );
         }
       }
       children.add(const SizedBox(height: 8));
     }
 
-    return Stack(
-      children: [
-        Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    tooltip: 'Adicionar exemplos',
-                    onPressed: store.seedMockData,
-                    icon: const Icon(Icons.auto_awesome),
-                  ),
-                  IconButton(
-                    tooltip: 'Limpar',
-                    onPressed: store.clear,
-                    icon: const Icon(Icons.delete_sweep_outlined),
-                  ),
-                ],
-              ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Metas por Período'),
+        actions: [
+          IconButton(
+            tooltip: 'Estatísticas',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const EstatisticasPage()),
             ),
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.fromLTRB(12, 0, 12, 80),
-                itemCount: children.length,
-                itemBuilder: (context, index) => children[index],
-              ),
-            ),
-          ],
-        ),
-        Positioned(
-          right: 16,
-          bottom: 16,
-          child: FloatingActionButton.extended(
-            onPressed: () => _abrirTelaNovaMeta(context),
-            icon: const Icon(Icons.add),
-            label: const Text('Adicionar Meta'),
+            icon: const Icon(Icons.bar_chart),
           ),
-        ),
-      ],
+          IconButton(
+            tooltip: 'Adicionar exemplos',
+            onPressed: store.seedMockData,
+            icon: const Icon(Icons.auto_awesome),
+          ),
+          IconButton(
+            tooltip: 'Limpar',
+            onPressed: store.clear,
+            icon: const Icon(Icons.delete_sweep_outlined),
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 80),
+        itemCount: children.length,
+        itemBuilder: (context, index) => children[index],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _abrirTelaNovaMeta(context),
+        icon: const Icon(Icons.add),
+        label: const Text('Adicionar Meta'),
+      ),
     );
   }
 
@@ -141,6 +152,7 @@ class MetasPage extends StatelessWidget {
 
 class _SectionHeader extends StatelessWidget {
   final String title;
+
   const _SectionHeader({required this.title});
 
   @override
@@ -155,10 +167,10 @@ class _SectionHeader extends StatelessWidget {
           Text(
             title,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: scheme.primary,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.3,
-            ),
+                  color: scheme.primary,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.3,
+                ),
           ),
           const Expanded(child: Divider(indent: 12, thickness: 0.8)),
         ],

@@ -42,7 +42,10 @@ class MetaCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             meta.titulo,
-                            style: Theme.of(context).textTheme.titleMedium
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .titleMedium
                                 ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                         ),
@@ -50,10 +53,16 @@ class MetaCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    if (meta.descricao.trim().isNotEmpty)
+                    if (meta.descricao
+                        .trim()
+                        .isNotEmpty)
                       Text(
                         meta.descricao,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(
                           color: Colors.black.withOpacity(0.7),
                         ),
                       ),
@@ -78,10 +87,13 @@ class MetaCard extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
                         child: Text(
-                          'Data limite: ${DateFormat('dd/MM/yyyy').format(meta.dataLimite!)}',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
-                          ),
+                          'Data limite: ${DateFormat('dd/MM/yyyy').format(meta
+                              .dataLimite!)}',
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: Colors.grey[600]),
                         ),
                       ),
 
@@ -90,8 +102,19 @@ class MetaCard extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 4),
                         child: Text(
                           'Dias restantes: ${meta.diasRestantes}',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: meta.diasRestantes! < 7 ? Colors.red : Colors.grey[600],
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
+                            color: meta.diasRestantes! <= 0
+                                ? Colors.red
+                                : meta.diasRestantes! < 7
+                                ? Colors.orange
+                                : Colors.grey[600],
+                            fontWeight: meta.diasRestantes! < 7
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                         ),
                       ),
@@ -133,7 +156,7 @@ class MetaCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: fg.withOpacity(0.25)),
+        border: Border.all(color: fg.withAlpha((fg.alpha * 0.25).round())),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -142,7 +165,11 @@ class MetaCard extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             status.label,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            style: Theme
+                .of(context)
+                .textTheme
+                .labelMedium
+                ?.copyWith(
               color: fg,
               fontWeight: FontWeight.w600,
             ),
@@ -157,7 +184,9 @@ class MetaCard extends StatelessWidget {
     required String label,
     required BuildContext context,
   }) {
-    final scheme = Theme.of(context).colorScheme;
+    final scheme = Theme
+        .of(context)
+        .colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -170,7 +199,10 @@ class MetaCard extends StatelessWidget {
         children: [
           Icon(icon, size: 14, color: scheme.primary),
           const SizedBox(width: 6),
-          Text(label, style: Theme.of(context).textTheme.labelMedium),
+          Text(label, style: Theme
+              .of(context)
+              .textTheme
+              .labelMedium),
         ],
       ),
     );

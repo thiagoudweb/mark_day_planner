@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 enum TipoDuracao { meiaHora, umaHora, turno }
 
 extension TipoDuracaoLabel on TipoDuracao {
@@ -62,6 +64,25 @@ extension LabelCategoria on Categoria {
         return 'Pessoal';
       case Categoria.lazer:
         return 'Lazer';
+    }
+  }
+}
+
+extension CorCategoria on Categoria {
+  Color get cor {
+    switch (this) {
+      case Categoria.estudo:
+        return const Color(0xFF7C3AED);
+      case Categoria.trabalho:
+        return const Color(0xFF2563EB);
+      case Categoria.saude:
+        return const Color(0xFF059669);
+      case Categoria.financas:
+        return const Color(0xFFEA580C);
+      case Categoria.pessoal:
+        return const Color(0xFFDC2626);
+      case Categoria.lazer:
+        return const Color(0xFFEAB308);
     }
   }
 }

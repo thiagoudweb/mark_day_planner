@@ -105,10 +105,14 @@ class MetaStore extends ChangeNotifier {
   PeriodoMeta? _filtroPeriodo;
   Categoria? _filtroCategoria;
   StatusMeta? _filtroStatus;
+  TurnoDia? _filtroTurno;
+  TipoDuracao? _filtroTipoDuracao;
 
   PeriodoMeta? get filtroPeriodo => _filtroPeriodo;
   Categoria? get filtroCategoria => _filtroCategoria;
   StatusMeta? get filtroStatus => _filtroStatus;
+  TurnoDia? get filtroTurno => _filtroTurno;
+  TipoDuracao? get filtroTipoDuracao => _filtroTipoDuracao;
 
   void setFiltroPeriodo(PeriodoMeta? periodo) {
     _filtroPeriodo = periodo;
@@ -125,22 +129,34 @@ class MetaStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setFiltroTurno(TurnoDia? turno) {
+    _filtroTurno = turno;
+    notifyListeners();
+  }
+
+  void setFiltroTipoDuracao(TipoDuracao? tipoDuracao) {
+    _filtroTipoDuracao = tipoDuracao;
+    notifyListeners();
+  }
+
   void limparFiltros() {
     _filtroPeriodo = null;
     _filtroCategoria = null;
     _filtroStatus = null;
+    _filtroTurno = null;
+    _filtroTipoDuracao = null;
     notifyListeners();
   }
 
   List<Meta> get metasFiltradas {
     return _metas.where((meta) {
-      final periodoMatch =
-          _filtroPeriodo == null || meta.periodo == _filtroPeriodo;
-      final categoriaMatch =
-          _filtroCategoria == null || meta.categoria == _filtroCategoria;
+      final periodoMatch = _filtroPeriodo == null || meta.periodo == _filtroPeriodo;
+      final categoriaMatch = _filtroCategoria == null || meta.categoria == _filtroCategoria;
       final statusMatch = _filtroStatus == null || meta.status == _filtroStatus;
+      final turnoMatch = _filtroTurno == null || meta.turno == _filtroTurno;
+      final tipoDuracaoMatch = _filtroTipoDuracao == null || meta.tipoDuracao == _filtroTipoDuracao;
 
-      return periodoMatch && categoriaMatch && statusMatch;
+      return periodoMatch && categoriaMatch && statusMatch && turnoMatch && tipoDuracaoMatch;
     }).toList();
   }
 
@@ -157,5 +173,43 @@ class MetaStore extends ChangeNotifier {
     }
 
     return Map.unmodifiable(mapa);
+  }
+
+  double get progressoGeral {
+    if (_metas.isEmpty) return 0.0;
+    final concluidas = _metas.where((m) => m.status == StatusMeta.atingida).length;
+    return concluidas / _metas.length;
+  }
+
+  Map<Categoria, double> get progressoPorCategoria {
+    final mapa = <Categoria, double>{};
+
+    for (final categoria in Categoria.values) {
+      final metasCategoria = _metas.where((m) => m.categoria == categoria).toList();
+      if (metasCategoria.isNotEmpty) {
+        final concluidas = metasCategoria.where((m) => m.status == StatusMeta.atingida).length;
+        mapa[categoria] = concluidas / metasCategoria.length;
+      } else {
+        mapa[categoria] = 0.0;
+      }
+    }
+
+    return mapa;
+  }
+
+  Map<PeriodoMeta, double> get progressoPorPeriodo {
+    final mapa = <PeriodoMeta, double>{};
+
+    for (final periodo in PeriodoMeta.values) {
+      final metasPeriodo = _metas.where((m) => m.periodo == periodo).toList();
+      if (metasPeriodo.isNotEmpty) {
+        final concluidas = metasPeriodo.where((m) => m.status == StatusMeta.atingida).length;
+        mapa[periodo] = concluidas / metasPeriodo.length;
+      } else {
+        mapa[periodo] = 0.0;
+      }
+    }
+
+    return mapa;
   }
 }
