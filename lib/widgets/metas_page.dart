@@ -6,6 +6,7 @@ import '../models/enums.dart';
 import 'meta_card.dart';
 import 'editar_meta_page.dart';
 import 'filtros_bar.dart';
+import 'estatisticas_page.dart';
 
 class MetasPage extends StatelessWidget {
   const MetasPage({super.key});
@@ -17,10 +18,7 @@ class MetasPage extends StatelessWidget {
 
     const ordem = [PeriodoMeta.semanal, PeriodoMeta.mensal, PeriodoMeta.anual];
 
-    final children = <Widget>[
-      const FiltrosBar(),
-      const SizedBox(height: 16),
-    ];
+    final children = <Widget>[const FiltrosBar(), const SizedBox(height: 16)];
 
     if (store.filtroPeriodo != null ||
         store.filtroCategoria != null ||
@@ -64,7 +62,10 @@ class MetasPage extends StatelessWidget {
     for (final periodo in ordem) {
       final lista = grouped[periodo] ?? const <Meta>[];
 
-      if (lista.isNotEmpty || (store.filtroPeriodo == null && store.filtroCategoria == null && store.filtroStatus == null)) {
+      if (lista.isNotEmpty ||
+          (store.filtroPeriodo == null &&
+              store.filtroCategoria == null &&
+              store.filtroStatus == null)) {
         children.add(_SectionHeader(title: periodo.label));
       }
 
@@ -73,10 +74,7 @@ class MetasPage extends StatelessWidget {
       } else {
         for (final meta in lista) {
           children.add(
-            MetaCard(
-              meta: meta,
-              onTap: () => _abrirTelaEdicao(context, meta),
-            ),
+            MetaCard(meta: meta, onTap: () => _abrirTelaEdicao(context, meta)),
           );
         }
       }
@@ -87,6 +85,14 @@ class MetasPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Metas por Período'),
         actions: [
+          IconButton(
+            tooltip: 'Estatísticas',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const EstatisticasPage()),
+            ),
+            icon: const Icon(Icons.bar_chart),
+          ),
           IconButton(
             tooltip: 'Adicionar exemplos',
             onPressed: store.seedMockData,
@@ -115,24 +121,21 @@ class MetasPage extends StatelessWidget {
   void _abrirTelaEdicao(BuildContext context, Meta meta) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => EditarMetaPage(meta: meta),
-      ),
+      MaterialPageRoute(builder: (context) => EditarMetaPage(meta: meta)),
     );
   }
 
   void _abrirTelaNovaMeta(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => EditarMetaPage(),
-      ),
+      MaterialPageRoute(builder: (context) => EditarMetaPage()),
     );
   }
 }
 
 class _SectionHeader extends StatelessWidget {
   final String title;
+
   const _SectionHeader({required this.title});
 
   @override
