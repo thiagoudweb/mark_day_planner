@@ -22,7 +22,9 @@ class MetasPage extends StatelessWidget {
 
     if (store.filtroPeriodo != null ||
         store.filtroCategoria != null ||
-        store.filtroStatus != null) {
+        store.filtroStatus != null ||
+        store.filtroTurno != null ||
+        store.filtroTipoDuracao != null) {
       children.add(
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
@@ -53,6 +55,16 @@ class MetasPage extends StatelessWidget {
                   label: 'Status: ${store.filtroStatus!.label}',
                   onClear: () => store.setFiltroStatus(null),
                 ),
+              if (store.filtroTurno != null)
+                _FiltroAtivoChip(
+                  label: 'Turno: ${store.filtroTurno!.label}',
+                  onClear: () => store.setFiltroTurno(null),
+                ),
+              if (store.filtroTipoDuracao != null)
+                _FiltroAtivoChip(
+                  label: 'Duração: ${store.filtroTipoDuracao!.label}',
+                  onClear: () => store.setFiltroTipoDuracao(null),
+                ),
             ],
           ),
         ),
@@ -65,7 +77,9 @@ class MetasPage extends StatelessWidget {
       if (lista.isNotEmpty ||
           (store.filtroPeriodo == null &&
               store.filtroCategoria == null &&
-              store.filtroStatus == null)) {
+              store.filtroStatus == null &&
+              store.filtroTurno == null &&
+              store.filtroTipoDuracao == null)) {
         children.add(_SectionHeader(title: periodo.label));
       }
 
@@ -74,7 +88,10 @@ class MetasPage extends StatelessWidget {
       } else {
         for (final meta in lista) {
           children.add(
-            MetaCard(meta: meta, onTap: () => _abrirTelaEdicao(context, meta)),
+            MetaCard(
+              meta: meta,
+              onTap: () => _abrirTelaEdicao(context, meta),
+            ),
           );
         }
       }
@@ -106,7 +123,7 @@ class MetasPage extends StatelessWidget {
         ],
       ),
       body: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 80),
         itemCount: children.length,
         itemBuilder: (context, index) => children[index],
       ),
@@ -150,10 +167,10 @@ class _SectionHeader extends StatelessWidget {
           Text(
             title,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: scheme.primary,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.3,
-            ),
+                  color: scheme.primary,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.3,
+                ),
           ),
           const Expanded(child: Divider(indent: 12, thickness: 0.8)),
         ],

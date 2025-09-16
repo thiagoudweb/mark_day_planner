@@ -1,10 +1,27 @@
 import 'dart:ui';
 
+enum TipoDuracao { meiaHora, umaHora, turno }
+
+extension TipoDuracaoLabel on TipoDuracao {
+  String get label {
+    switch (this) {
+      case TipoDuracao.meiaHora:
+        return 'Meia hora';
+      case TipoDuracao.umaHora:
+        return 'Uma hora';
+      case TipoDuracao.turno:
+        return 'Turno do dia';
+    }
+  }
+}
+
 enum PeriodoMeta { semanal, mensal, anual }
 
 enum StatusMeta { atingida, parcial, naoAtingida }
 
 enum Categoria { estudo, trabalho, saude, financas, pessoal, lazer }
+
+enum TurnoDia { manha, tarde, noite }
 
 extension LabelPeriodoMeta on PeriodoMeta {
   String get label {
@@ -66,6 +83,30 @@ extension CorCategoria on Categoria {
         return const Color(0xFFDC2626);
       case Categoria.lazer:
         return const Color(0xFFEAB308);
+    }
+  }
+}
+
+extension LabelTurnoDia on TurnoDia {
+  String get label {
+    switch (this) {
+      case TurnoDia.manha:
+        return 'Manhã';
+      case TurnoDia.tarde:
+        return 'Tarde';
+      case TurnoDia.noite:
+        return 'Noite';
+    }
+  }
+
+  static TurnoDia fromDateTime(DateTime dateTime) {
+    final hora = dateTime.hour;
+    if (hora >= 5 && hora < 12) {
+      return TurnoDia.manha;
+    } else if (hora >= 12 && hora < 18) {
+      return TurnoDia.tarde;
+    } else {
+      return TurnoDia.noite;
     }
   }
 }

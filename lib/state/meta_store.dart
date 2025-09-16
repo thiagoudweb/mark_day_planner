@@ -67,6 +67,8 @@ class MetaStore extends ChangeNotifier {
         descricao: 'Artigos de Flutter esta semana',
         periodo: PeriodoMeta.semanal,
         categoria: Categoria.estudo,
+        turno: TurnoDia.manha,
+        tipoDuracao: TipoDuracao.meiaHora,
         dataLimite: DateTime.now().add(const Duration(days: 7)),
       ),
       Meta(
@@ -74,6 +76,8 @@ class MetaStore extends ChangeNotifier {
         descricao: 'Meta de corrida do mês',
         periodo: PeriodoMeta.mensal,
         categoria: Categoria.saude,
+        turno: TurnoDia.tarde,
+        tipoDuracao: TipoDuracao.umaHora,
         dataLimite: DateTime.now().add(const Duration(days: 30)),
       ),
       Meta(
@@ -81,6 +85,8 @@ class MetaStore extends ChangeNotifier {
         descricao: 'Planejamento financeiro anual',
         periodo: PeriodoMeta.anual,
         categoria: Categoria.financas,
+        turno: TurnoDia.noite,
+        tipoDuracao: TipoDuracao.turno,
         dataLimite: DateTime.now().add(const Duration(days: 365)),
       ),
       Meta(
@@ -88,18 +94,25 @@ class MetaStore extends ChangeNotifier {
         descricao: 'Organizar backlog mensal',
         periodo: PeriodoMeta.mensal,
         categoria: Categoria.trabalho,
+        turno: TurnoDia.tarde,
+        tipoDuracao: TipoDuracao.umaHora,
         dataLimite: DateTime.now().add(const Duration(days: 30)),
       ),
     ]);
     notifyListeners();
   }
+
   PeriodoMeta? _filtroPeriodo;
   Categoria? _filtroCategoria;
   StatusMeta? _filtroStatus;
+  TurnoDia? _filtroTurno;
+  TipoDuracao? _filtroTipoDuracao;
 
   PeriodoMeta? get filtroPeriodo => _filtroPeriodo;
   Categoria? get filtroCategoria => _filtroCategoria;
   StatusMeta? get filtroStatus => _filtroStatus;
+  TurnoDia? get filtroTurno => _filtroTurno;
+  TipoDuracao? get filtroTipoDuracao => _filtroTipoDuracao;
 
   void setFiltroPeriodo(PeriodoMeta? periodo) {
     _filtroPeriodo = periodo;
@@ -116,10 +129,22 @@ class MetaStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setFiltroTurno(TurnoDia? turno) {
+    _filtroTurno = turno;
+    notifyListeners();
+  }
+
+  void setFiltroTipoDuracao(TipoDuracao? tipoDuracao) {
+    _filtroTipoDuracao = tipoDuracao;
+    notifyListeners();
+  }
+
   void limparFiltros() {
     _filtroPeriodo = null;
     _filtroCategoria = null;
     _filtroStatus = null;
+    _filtroTurno = null;
+    _filtroTipoDuracao = null;
     notifyListeners();
   }
 
@@ -128,8 +153,10 @@ class MetaStore extends ChangeNotifier {
       final periodoMatch = _filtroPeriodo == null || meta.periodo == _filtroPeriodo;
       final categoriaMatch = _filtroCategoria == null || meta.categoria == _filtroCategoria;
       final statusMatch = _filtroStatus == null || meta.status == _filtroStatus;
+      final turnoMatch = _filtroTurno == null || meta.turno == _filtroTurno;
+      final tipoDuracaoMatch = _filtroTipoDuracao == null || meta.tipoDuracao == _filtroTipoDuracao;
 
-      return periodoMatch && categoriaMatch && statusMatch;
+      return periodoMatch && categoriaMatch && statusMatch && turnoMatch && tipoDuracaoMatch;
     }).toList();
   }
 
@@ -153,7 +180,7 @@ class MetaStore extends ChangeNotifier {
     final concluidas = _metas.where((m) => m.status == StatusMeta.atingida).length;
     return concluidas / _metas.length;
   }
-  
+
   Map<Categoria, double> get progressoPorCategoria {
     final mapa = <Categoria, double>{};
 
